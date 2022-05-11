@@ -3,11 +3,22 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 from route.route import Route
-
+import argparse
 
 def main():
-    k = 550
-    file = './test/examples/route1.txt'
+    usage_options = "%(prog)s [-v] [-f] "
+
+    parser = argparse.ArgumentParser(
+        usage=usage_options,
+        description="<command description>"
+    )
+
+    parser.add_argument("-k", "--len")
+    parser.add_argument("-f", "--file")
+
+    params = parser.parse_args()
+    file = params.file
+    k = int(params.len)
 
     route = Route(k)
     route.add_antennas(file)
