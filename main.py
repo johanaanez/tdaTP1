@@ -22,7 +22,7 @@ def main():
 
     route = Route(k)
     route.add_antennas(file)
-    route.get_minimun_antennas()
+    route.calculate_minimun_antennas()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

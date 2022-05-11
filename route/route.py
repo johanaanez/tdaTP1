@@ -20,7 +20,7 @@ class Route:
     def clean_initial_antennas(self):
         necessary_antennas = []
         for i in range(len(self.antennas)):
-            if self.antennas[i].start < 0 and self.antennas[i + 1].start > 0:
+            if self.antennas[i].start < 0 and i<(len(self.antennas)-2) and self.antennas[i + 1].start > 0:
                 necessary_antennas.append(self.antennas[i])
             elif self.antennas[i].start >= 0:
                 necessary_antennas.append(self.antennas[i])
@@ -38,7 +38,11 @@ class Route:
 
         file.close()
 
-    def get_minimun_antennas(self):
+    def calculate_minimun_antennas(self):
+        if len(self.antennas) == 1 and self.antennas[0].end >= self.length:
+            return self.antennas
+        if len(self.antennas) == 1 and self.antennas[0].end < self.length:
+            return []
         self.order_by_start()
         self.clean_initial_antennas()
 
@@ -49,11 +53,11 @@ class Route:
         heapify(heap)
         heappush(heap, antenna.start)
 
-        for i in range(1, len(self.antennas)):
+        for i in range(0, len(self.antennas)):
             p = heapq.nlargest(1, heap)
             antenna = self.antennas[i]
             if antenna.start > self.antennas[-1].end:
-                return 0
+                return []
             if antenna.start > self.length:
                 return necessary_antennas
             if antenna.end > p[0]:
