@@ -13,12 +13,12 @@ def main():
         description="<command description>"
     )
 
-    parser.add_argument("-k", "--len")
+    parser.add_argument("-k", "--k")
     parser.add_argument("-f", "--file")
 
     params = parser.parse_args()
     file = params.file
-    k = int(params.len)
+    k = int(params.k)
 
     route = Route(k)
     route.add_antennas(file)
