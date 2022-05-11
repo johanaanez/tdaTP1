@@ -10,24 +10,21 @@ class Route:
     def __init__(self, length):
         self.length = length
         self.antennas = []
-        self.necessary_antennas = []
-        self.unnecessary_antennas = []
 
     def add_antenna(self, antenna):
         self.antennas.append(antenna)
-
-    def add_necessary_antennas(self, antenna):
-        self.necessary_antennas.append(antenna)
 
     def remove_antenna(self, antenna):
         self.necessary_antennas.remove(antenna)
 
     def clean_initial_antennas(self):
+        necessary_antennas = []
         for i in range(len(self.antennas)):
             if self.antennas[i].start < 0 and self.antennas[i + 1].start > 0:
-                self.add_necessary_antennas(self.antennas[i])
+                necessary_antennas.append(self.antennas[i])
             elif self.antennas[i].start >= 0:
-                self.add_necessary_antennas(self.antennas[i])
+                necessary_antennas.append(self.antennas[i])
+        self.antennas = necessary_antennas.copy()
 
     def order_by_start(self):
         self.antennas.sort(key=lambda x: x.start)
@@ -45,22 +42,25 @@ class Route:
         self.order_by_start()
         self.clean_initial_antennas()
 
-        antenna = self.necessary_antennas[0]
+        antenna = self.antennas[0]
+        necessary_antennas = [antenna.id]
+        unnecessary_antennas = []
         heap = []
         heapify(heap)
         heappush(heap, antenna.start)
 
-        for i in range(1, len(self.necessary_antennas)):
+        for i in range(1, len(self.antennas)):
             p = heapq.nlargest(1, heap)
-            antenna = self.necessary_antennas[i]
-            if antenna.start > self.length:
-                return heap
-            if antenna.start > self.necessary_antennas[-1].end:
+            antenna = self.antennas[i]
+            if antenna.start > self.antennas[-1].end:
                 return 0
+            if antenna.start > self.length:
+                return necessary_antennas
             if antenna.end > p[0]:
-                if i < (len(self.necessary_antennas) - 1) and self.necessary_antennas[i + 1].start <= \
-                        self.necessary_antennas[i - 1].end:
-                    self.unnecessary_antennas.append(antenna)
+                if i < (len(self.antennas) - 1) and self.antennas[i + 1].start <= \
+                        self.antennas[i - 1].end:
+                    unnecessary_antennas.append(antenna.id)
                 else:
                     heappush(heap, antenna.start)
-        return heap
+                    necessary_antennas.append(antenna.id)
+        return necessary_antennas
